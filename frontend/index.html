@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>KLab Test</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
+        .status { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h1>🔬 KLab Kapcsolati Teszt</h1>
+    <div id="result">Betöltés...</div>
+
+    <script>
+        // A böngésző a localhost:5000-en éri el a backendet
+        fetch('http://' + window.location.hostname + ':5000/api/version')
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = `
+                    <p class="status">${data.status}</p>
+                    <p>MongoDB verzió: ${data.dbVersion}</p>
+                    <p>Backend: ${data.backend}</p>
+                `;
+            })
+            .catch(err => {
+                document.getElementById('result').innerHTML = `<p style="color:red">Hiba: A backend nem elérhető!</p>`;
+            });
+    </script>
+</body>
+</html>
