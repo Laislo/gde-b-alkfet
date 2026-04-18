@@ -1,0 +1,106 @@
+/* Alapbeállítások */
+body {
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    color: #333;
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Kártya stílus az űrlaphoz */
+.card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    max-width: 600px;
+    margin: 0 auto 30px auto;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.card h3 {
+    width: 100%;
+    margin-top: 0;
+    text-align: center;
+    color: #34495e;
+}
+
+/* Inputok és gombok */
+input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    flex: 1;
+    min-width: 150px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background-color: #2980b9;
+}
+
+/* Táblázat stílus */
+table {
+    width: 100%;
+    max-width: 1000px;
+    margin: 0 auto;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+th {
+    background-color: #34495e;
+    color: white;
+    padding: 15px;
+    text-align: left;
+}
+
+td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+/* Státusz specifikus színek */
+tr.pending {
+    background-color: #fffbe6; /* Halvány sárga */
+}
+
+tr.completed {
+    background-color: #f6ffed; /* Halvány zöld */
+}
+
+tr.oos {
+    background-color: #fff1f0; /* Halvány piros */
+    color: #cf1322;
+    font-weight: bold;
+}
+
+/* Mérés gomb egyedi stílusa */
+tr.pending button {
+    background-color: #f39c12;
+}
+
+tr.pending button:hover {
+    background-color: #e67e22;
+}

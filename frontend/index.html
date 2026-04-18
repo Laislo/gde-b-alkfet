@@ -1,30 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>KLab Test</title>
-    <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; }
-        .status { color: green; font-weight: bold; }
-    </style>
+    <meta charset="UTF-8">
+    <title>KLab LIMS</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <h1>🔬 KLab Kapcsolati Teszt</h1>
-    <div id="result">Betöltés...</div>
+    <h1>🔬 KLab LIMS</h1>
+    <div class="card">
+        <input id="drug" placeholder="Hatóanyag">
+        <input id="batch" placeholder="Sarzsszám">
+        <button onclick="save()">Regisztráció</button>
+    </div>
+    <table id="target"></table>
 
     <script>
-        // A böngésző a localhost:5000-en éri el a backendet
-        fetch('http://' + window.location.hostname + ':5000/api/version')
-            .then(res => res.json())
-            .then(data => {
-                document.getElementById('result').innerHTML = `
-                    <p class="status">${data.status}</p>
-                    <p>MongoDB verzió: ${data.dbVersion}</p>
-                    <p>Backend: ${data.backend}</p>
-                `;
-            })
-            .catch(err => {
-                document.getElementById('result').innerHTML = `<p style="color:red">Hiba: A backend nem elérhető!</p>`;
+        const API = `http://${window.location.hostname}:5000/api/samples`;
+
+        async function load() {
+            const res = await fetch(API);
+            const data = await res.json();
+            document.getElementById('target').innerHTML = `
+                <tr><th>Lab ID</th><th>Név</th><th>Státusz</th><th>Művelet</th></tr>
+                ${data.map(s => `
+                    <tr class="${s.status.toLowerCase()}">
+                        <td>${s.labId}</td>
+                        <td>${s.drugName}</td>
+                        <td>${s.status} ${s.assayValue ? '| ' + s.assayValue + '%' : ''}</td>
+                        <td>${s.status === 'Pending' ? `<button onclick="measure('${s._id}')">Mérés</button>` : '✓'}</td>
+                    </tr>`).join('')}`;
+        }
+
+        async function save() {
+            const drugName = document.getElementById('drug').value;
+            const batchNumber = document.getElementById('batch').value;
+            await fetch(API, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ drugName, batchNumber })
             });
+            load();
+        }
+
+        async function measure(id) {
+            const val = prompt("Mért érték (%):");
+            if(val) {
+                await fetch(`${API}/${id}`, {
+                    method: 'PATCH',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ assayValue: parseFloat(val) })
+                });
+                load();
+            }
+        }
+        load();
     </script>
 </body>
 </html>
