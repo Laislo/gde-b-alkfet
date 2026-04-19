@@ -4,6 +4,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from datetime import datetime
 from bson import ObjectId
+from pydantic import BaseModel, model_validator
 import os
 
 app = FastAPI()
@@ -28,6 +29,16 @@ def fix_id(doc):
 class SampleCreate(BaseModel):
     drugName: str
     batchNumber: str
+    specMin: float
+    specMax: float
+    @model_validator(mode='after')
+    def check_limits(self):
+        if self.specMin >= self.specMax:
+            raise ValueError('A minimum értéknek kisebbnek kell lennie a maximumnál!')
+        return self
+
+class ResultUpdate(BaseModel):
+    assayValue: float
 
 @app.get("/api/samples")
 async def get_samples():
@@ -63,11 +74,31 @@ async def add_sample(sample: SampleCreate):
     return new_doc
 
 @app.patch("/api/samples/{s_id}")
-async def update_sample(s_id: str, data: dict):
-    val = data.get("assayValue")
-    status = "Completed" if 95.0 <= val <= 105.0 else "OOS"
-    await db.samples.update_one(
-        {"_id": ObjectId(s_id)}, 
-        {"$set": {"assayValue": val, "status": status}}
-    )
-    return {"status": status}
+async def update_sample(s_id: str, update: ResultUpdate):
+    try:
+        # 1. Megkeressük a mintát
+        sample = await db.samples.find_one({"_id": ObjectId(s_id)})
+        if not sample:
+            raise HTTPException(status_code=404, detail="Nincs meg a minta")
+
+        # 2. Logika futtatása
+        val = update.assayValue
+        s_min = sample.get("specMin", 95.0)
+        s_max = sample.get("specMax", 105.0)
+        
+        status = "Completed" if s_min <= val <= s_max else "OOS"
+        oos_id = None
+        
+        if status == "OOS":
+            oos_count = await db.samples.count_documents({"status": "OOS"})
+            oos_id = f"OOS-{datetime.now().year}-{(oos_count + 1):03d}"
+
+        # 3. Mentés az adatbázisba
+        await db.samples.update_one(
+            {"_id": ObjectId(s_id)},
+            {"$set": {"assayValue": val, "status": status, "oosId": oos_id}}
+        )
+        return {"status": status, "oosId": oos_id}
+    except Exception as e:
+        print(f"Hiba a mérésnél: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
