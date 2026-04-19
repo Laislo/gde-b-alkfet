@@ -1,0 +1,24 @@
+name: KLab LIMS Docker CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  docker-build-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Backend Image
+      run: docker build ./backend --file ./backend/Dockerfile --tag klab-backend:test
+
+    - name: Build Frontend Image
+      run: docker build ./frontend --file ./frontend/Dockerfile --tag klab-frontend:test
+
+    - name: Docker Compose Config Check
+      run: docker compose config
