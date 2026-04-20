@@ -34,9 +34,10 @@ jobs:
       - name: Extract metadata for Backend
         id: meta-backend
         uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-backend
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-frontend
+        with: 
+          images: |
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-backend
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-frontend
 
       # 3. Backend build és push
       - name: Build and push Backend
