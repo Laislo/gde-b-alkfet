@@ -34,16 +34,33 @@ jobs:
       - name: Extract metadata for Backend
         id: meta-backend
         uses: docker/metadata-action@v5
-        with: 
-          images: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-backend
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-frontend
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/klab-backend
+          tags: |
+            type=raw,value=latest
+            type=ref,event=branch
 
-      # 3. Backend build és push
       - name: Build and push Backend
         uses: docker/build-push-action@v5
         with:
-          context: .
+          context: ./backend
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-backend.outputs.tags }}
+          labels: ${{ steps.meta-backend.outputs.labels }}
+
+      - name: Extract metadata for Frontend
+        id: meta-frontend
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/klab-frontend
+          tags: |
+            type=raw,value=latest
+            type=ref,event=branch
+
+      - name: Build and push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-frontend.outputs.tags }}
+          labels: ${{ steps.meta-frontend.outputs.labels }}
