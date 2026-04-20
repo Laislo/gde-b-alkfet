@@ -6,7 +6,7 @@ services:
       - "27017:27017"
 
   backend:
-    build: ./backend
+    image: ghcr.io/laislo/klab-backend:main
     container_name: klab_backend
     ports:
       - "5000:5000"
@@ -16,7 +16,7 @@ services:
       - db
 
   frontend:
-    build: ./frontend
+    image: ghcr.io/laislo/klab-frontend:main
     container_name: klab_frontend
     ports:
       - "80:80"
