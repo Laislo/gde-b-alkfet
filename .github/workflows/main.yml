@@ -18,31 +18,31 @@ jobs:
       packages: write # Ez kell a feltöltéshez
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    # 1. Bejelentkezés a GHCR-be a GitHub-tól kapott ideiglenes jelszóval
-    - name: Log in to the Container registry
-      if: github.event_name != 'pull_request'
-      uses: docker/login-action@v3
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+      # 1. Bejelentkezés a GHCR-be a GitHub-tól kapott ideiglenes jelszóval
+      - name: Log in to the Container registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-    # 2. Metaadatok (tagek, label-ek) generálása a Backendhez és Frontendhez
-    - name: Extract metadata for Backend
-      id: meta-backend
-      uses: docker/metadata-action@v5
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-backend
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-frontend
+      # 2. Metaadatok (tagek, label-ek) generálása a Backendhez és Frontendhez
+      - name: Extract metadata for Backend
+        id: meta-backend
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-backend
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/klab-frontend
 
-    # 3. Backend build és push
-    - name: Build and push Backend
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
+      # 3. Backend build és push
+      - name: Build and push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
