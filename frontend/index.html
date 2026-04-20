@@ -89,8 +89,8 @@
                 specMax: parseFloat(specMax)
             };
 
-// DEBUG: Nézzük meg a konzolon, mit küldünk el valójában!
-    console.log("Küldött adatok:", payload);
+            // DEBUG: Nézzük meg a konzolon, mit küldünk el valójában!
+            console.log("Küldött adatok:", payload);
 
             const response = await fetch(API, {
                 method: 'POST',
@@ -98,16 +98,16 @@
                 body: JSON.stringify(payload)
             });
 
-if (response.ok) {
-        // Mezők ürítése és frissítés
-        document.getElementById('drug').value = '';
-        document.getElementById('batch').value = '';
-        load();
-    } else {
-        const errorDetail = await response.json();
-        console.error("Szerver hiba:", errorDetail);
-        alert("Hiba a mentésnél! Ellenőrizd a konzolt.");
-    }
+            if (response.ok) {
+                // Mezők ürítése és frissítés
+                document.getElementById('drug').value = '';
+                document.getElementById('batch').value = '';
+                load();
+            } else {
+                const errorDetail = await response.json();
+                console.error("Szerver hiba:", errorDetail);
+                alert("Hiba a mentésnél! Ellenőrizd a konzolt.");
+            }
 }
 
 async function measure(id) {
