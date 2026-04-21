@@ -57,6 +57,14 @@ async def get_sample(s_id: str):
 
 @app.post("/api/samples")
 async def add_sample(sample: SampleCreate):
+    # --- ÚJ: Sarzsszám ellenőrzése ---
+    existing_batch = await db.samples.find_one({"batchNumber": sample.batchNumber})
+    if existing_batch:
+        raise HTTPException(
+            status_code=400, 
+            detail=f"Hiba: A '{sample.batchNumber}' sarzsszám már szerepel a rendszerben!"
+        )
+    # --- ELLENŐRZÉS VÉGE ---
     year = datetime.now().year
     count = await db.samples.count_documents({
         "labId": {"$regex": f"^KLab/{year}/"}

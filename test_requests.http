@@ -1,5 +1,5 @@
 ### Alapváltozók
-@baseUrl = http://localhost:5000/api
+@baseUrl = http://192.168.1.60:5000/api
 @sampleId = ID_HELYE_IDE
 
 ### 1. Új minta létrehozása
