@@ -122,7 +122,7 @@ const App = {
 
         const fetchSamples = async () => {
             const res = await fetch('/api/samples');
-            samples.value = await res.json();
+            const data = await res.json();
             // Minden mintához hozzáadunk egy ideiglenes mezőt a beviteli mezőhöz
             samples.value = data.map(s => ({ ...s, tempValue: null }));
         };
