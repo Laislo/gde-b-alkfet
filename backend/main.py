@@ -89,7 +89,7 @@ async def add_sample(sample: SampleCreate):
 
     new_doc = sample.model_dump()
     new_doc.update({
-        "labId": new_id,
+        "labId": candidate_id,
         "status": "Pending",
         "arrivalDate": datetime.now(),
         "assayValue": None,
