@@ -134,12 +134,21 @@ const App = {
                     currentView.value = 'list';
                     fetchSamples();
                 } else {
-                    // Hiba esetén (pl. validációs hiba vagy duplikált sarzsszám)
-                    // A FastAPI a hibaüzenetet a 'detail' mezőben küldi
-                    errorMessage.value = data.detail || 'Váratlan hiba történt';
+                    // Ha a 'detail' egy lista (Pydantic validációs hiba)
+                    if (Array.isArray(data.detail)) {
+                        // Kivesszük az első hibaüzenetet a listából
+                        errorMessage.value = data.detail[0].msg;
+                    } 
+                    // Ha a 'detail' egy sima szöveg (HTTPException)
+                    else if (typeof data.detail === 'string') {
+                        errorMessage.value = data.detail;
+                    } 
+                    else {
+                        errorMessage.value = 'Érvénytelen adatok lettek megadva.';
+                    }
                 }
             } catch (err) {
-                errorMessage.value = 'Nem sikerült elérni a szervert.';
+                errorMessage.value = 'Hiba történt a mentés során.';
             }
         };
 
