@@ -20,6 +20,12 @@ app.add_middleware(
 client = AsyncIOMotorClient(os.getenv("MONGO_URI", "mongodb://db:27017"))
 db = client.klab_db
 
+# ÚJ: Egyedi indexek létrehozása az indításkor
+@app.on_event("startup")
+async def create_indexes():
+    await db.samples.create_index("labId", unique=True)
+    await db.samples.create_index("batchNumber", unique=True)
+
 # Segédfüggvény a MongoDB -> JSON konverzióhoz
 def fix_id(doc):
     if doc:
@@ -66,11 +72,21 @@ async def add_sample(sample: SampleCreate):
         )
     # --- ELLENŐRZÉS VÉGE ---
     year = datetime.now().year
-    count = await db.samples.count_documents({
-        "labId": {"$regex": f"^KLab/{year}/"}
-    })
+
+    # 2. Ütközésmentes Lab ID generálása
+    # Megszámoljuk az összes idei mintát az alap sorszámhoz
+    count = await db.samples.count_documents({"labId": {"$regex": f"^KLab/{year}/"}})
     
-    new_id = f"KLab/{year}/{(count + 1):03d}"
+    candidate_id = ""
+    offset = 1
+    # Addig növeljük a sorszámot, amíg nem találunk egy szabad helyet
+    while True:
+        candidate_id = f"KLab/{year}/{(count + offset):03d}"
+        exists = await db.samples.find_one({"labId": candidate_id})
+        if not exists:
+            break
+        offset += 1
+
     new_doc = sample.model_dump()
     new_doc.update({
         "labId": new_id,
@@ -80,10 +96,14 @@ async def add_sample(sample: SampleCreate):
         "oosId": None
     })
     
-    result = await db.samples.insert_one(new_doc)
-    new_doc["_id"] = str(result.inserted_id)
-    new_doc["arrivalDate"] = new_doc["arrivalDate"].isoformat()
-    return new_doc
+    try:
+        result = await db.samples.insert_one(new_doc)
+        new_doc["_id"] = str(result.inserted_id)
+        new_doc["arrivalDate"] = new_doc["arrivalDate"].isoformat()
+        return new_doc
+    except Exception as e:
+        # Ha valamiért mégis becsúszna egy duplikáció az index miatt
+        raise HTTPException(status_code=500, detail="Adatbázis hiba az azonosító generálásakor.")
 
 @app.patch("/api/samples/{s_id}")
 async def update_sample(s_id: str, update: ResultUpdate):
