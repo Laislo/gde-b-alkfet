@@ -1,6 +1,6 @@
 ### Alapváltozók
 @baseUrl = http://192.168.1.60:5000/api
-@sampleId = ID_HELYE_IDE
+@sampleId = 69e7bc5fa9e8415e985b77c2
 
 ### 1. Új minta létrehozása
 POST {{baseUrl}}/samples
@@ -25,7 +25,7 @@ PATCH {{baseUrl}}/samples/{{sampleId}}
 Content-Type: application/json
 
 {
-    "assayValue": 99.5
+    "assayValue": 50.5
 }
 
 ### 5. Minta törlése

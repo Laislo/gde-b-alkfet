@@ -61,6 +61,10 @@ const App = {
 
                 <div v-if="currentView === 'add'" class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow">
                     <h2 class="text-2xl font-bold mb-6">Új minta rögzítése</h2>
+                    <div v-if="errorMessage" class="mb-4 p-3 bg-red-100 border-l-4 border-red-500 text-red-700 text-sm">
+                        <p class="font-bold">Hiba!</p>
+                        <p>{{ errorMessage }}</p>
+                    </div>
                     <form @submit.prevent="submitSample" class="space-y-4">
                         <div>
                             <label class="block text-sm font-medium text-gray-700">Hatóanyag neve</label>
@@ -89,6 +93,7 @@ const App = {
     setup() {
         const currentView = ref('list');
         const samples = ref([]);
+        const errorMessage = ref('');
         const currentPage = ref(1);
         const perPage = 5; // Hány elem legyen egy oldalon
 
@@ -112,18 +117,29 @@ const App = {
         };
 
         const submitSample = async () => {
-            const res = await fetch('/api/samples', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(newSample.value)
-            });
-            if (res.ok) {
-                newSample.value = { drugName: '', batchNumber: '', specMin: 95.0, specMax: 105.0 };
-                currentView.value = 'list';
-                fetchSamples();
-            } else {
-                const err = await res.json();
-                alert(err.detail);
+            errorMessage.value = ''; // Beküldés előtt töröljük a régi hibát
+        
+            try {
+                const res = await fetch('/api/samples', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(newSample.value)
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Siker esetén
+                    newSample.value = { drugName: '', batchNumber: '', specMin: 95.0, specMax: 105.0 };
+                    currentView.value = 'list';
+                    fetchSamples();
+                } else {
+                    // Hiba esetén (pl. validációs hiba vagy duplikált sarzsszám)
+                    // A FastAPI a hibaüzenetet a 'detail' mezőben küldi
+                    errorMessage.value = data.detail || 'Váratlan hiba történt';
+                }
+            } catch (err) {
+                errorMessage.value = 'Nem sikerült elérni a szervert.';
             }
         };
 
@@ -144,7 +160,7 @@ const App = {
         onMounted(fetchSamples);
 
         return {
-            currentView, samples, newSample, currentPage, totalPages, 
+            currentView, samples, newSample, currentPage, totalPages, errorMessage,
             paginatedSamples, fetchSamples, submitSample, statusBadge, deleteSample
         };
     }
