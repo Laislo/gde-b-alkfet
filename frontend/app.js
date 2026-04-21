@@ -100,19 +100,19 @@ const App = {
         });
 
         const fetchSamples = async () => {
-            const res = await fetch('http://localhost:5000/api/samples');
+            const res = await fetch('/api/samples');
             samples.value = await res.json();
         };
 
         const deleteSample = async (id) => {
             if(confirm('Biztosan törlöd?')) {
-                await fetch(`http://localhost:5000/api/samples/${id}`, { method: 'DELETE' });
+                await fetch(`/api/samples/${id}`, { method: 'DELETE' });
                 fetchSamples();
             }
         };
 
         const submitSample = async () => {
-            const res = await fetch('http://localhost:5000/api/samples', {
+            const res = await fetch('/api/samples', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newSample.value)
