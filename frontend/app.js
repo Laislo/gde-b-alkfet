@@ -34,9 +34,25 @@ const App = {
                                     <td class="p-3 border-b">{{ sample.drugName }}</td>
                                     <td class="p-3 border-b">{{ sample.batchNumber }}</td>
                                     <td class="p-3 border-b">
-                                        <span :class="statusBadge(sample.status)" class="px-2 py-1 rounded text-xs font-bold">
-                                            {{ sample.status }}
-                                        </span>
+                                        <div v-if="sample.status === 'Pending'" class="flex items-center space-x-2">
+                                            <input 
+                                                v-model.number="sample.tempValue" 
+                                                type="number" 
+                                                step="0.01" 
+                                                placeholder="%" 
+                                                class="w-20 border rounded p-1 text-sm focus:ring-1 focus:ring-blue-500"
+                                            >
+                                            <button 
+                                                @click="saveResult(sample._id, sample.tempValue)" 
+                                                class="bg-green-500 text-white px-2 py-1 rounded text-xs hover:bg-green-600 transition"
+                                            >
+                                                Mentés
+                                            </button>
+                                        </div>
+                                        <div v-else class="font-semibold text-gray-700">
+                                            {{ sample.assayValue }} %
+                                            <p v-if="sample.oosId" class="text-[10px] text-red-500 font-mono">{{ sample.oosId }}</p>
+                                        </div>
                                     </td>
                                     <td class="p-3 border-b">{{ sample.assayValue || '-' }} %</td>
                                     <td class="p-3 border-b">
@@ -107,6 +123,8 @@ const App = {
         const fetchSamples = async () => {
             const res = await fetch('/api/samples');
             samples.value = await res.json();
+            // Minden mintához hozzáadunk egy ideiglenes mezőt a beviteli mezőhöz
+            samples.value = data.map(s => ({ ...s, tempValue: null }));
         };
 
         const deleteSample = async (id) => {
@@ -152,6 +170,31 @@ const App = {
             }
         };
 
+        const saveResult = async (id, value) => {
+            if (value === undefined || value === null) {
+                alert("Kérlek, adj meg egy mért értéket!");
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/samples/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ assayValue: value })
+                });
+
+                if (res.ok) {
+                    // Frissítjük a listát, hogy lássuk az új státuszt és az esetleges OOS ID-t
+                    await fetchSamples();
+                } else {
+                    const err = await res.json();
+                    alert("Hiba a mentésnél: " + (err.detail || "Ismeretlen hiba"));
+                }
+            } catch (err) {
+                alert("Nem sikerült csatlakozni a szerverhez.");
+            }
+        };
+
         // Pagination logika
         const totalPages = computed(() => Math.ceil(samples.value.length / perPage) || 1);
         const paginatedSamples = computed(() => {
@@ -170,7 +213,8 @@ const App = {
 
         return {
             currentView, samples, newSample, currentPage, totalPages, errorMessage,
-            paginatedSamples, fetchSamples, submitSample, statusBadge, deleteSample
+            paginatedSamples, fetchSamples, submitSample, statusBadge, deleteSample,
+            saveResult
         };
     }
 };
