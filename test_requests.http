@@ -1,0 +1,32 @@
+### Alapváltozók
+@baseUrl = http://localhost:5000/api
+@sampleId = ID_HELYE_IDE
+
+### 1. Új minta létrehozása
+POST {{baseUrl}}/samples
+Content-Type: application/json
+
+{
+    "drugName": "Aspirin 100mg",
+    "batchNumber": "ASP-2026-001",
+    "specMin": 98.0,
+    "specMax": 102.0
+}
+
+### 2. Összes minta lekérése
+GET {{baseUrl}}/samples
+
+### 3. Egy konkrét minta lekérése
+# Megjegyzés: Az ID-t másold be a POST válaszából!
+GET {{baseUrl}}/samples/{{sampleId}}
+
+### 4. Mérés rögzítése / Frissítés
+PATCH {{baseUrl}}/samples/{{sampleId}}
+Content-Type: application/json
+
+{
+    "assayValue": 99.5
+}
+
+### 5. Minta törlése
+DELETE {{baseUrl}}/samples/{{sampleId}}

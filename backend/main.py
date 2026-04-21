@@ -7,7 +7,7 @@ from bson import ObjectId
 from pydantic import BaseModel, model_validator
 import os
 
-app = FastAPI()
+app = FastAPI(title="KLab LIMS API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -31,6 +31,7 @@ class SampleCreate(BaseModel):
     batchNumber: str
     specMin: float
     specMax: float
+
     @model_validator(mode='after')
     def check_limits(self):
         if self.specMin >= self.specMax:
@@ -45,60 +46,69 @@ async def get_samples():
     cursor = db.samples.find().sort("_id", -1)
     return [fix_id(s) async for s in cursor]
 
+@app.get("/api/samples/{s_id}")
+async def get_sample(s_id: str):
+    if not ObjectId.is_valid(s_id):
+        raise HTTPException(status_code=400, detail="Érvénytelen ID formátum")
+    doc = await db.samples.find_one({"_id": ObjectId(s_id)})
+    if not doc:
+        raise HTTPException(status_code=404, detail="A minta nem található")
+    return fix_id(doc)
+
 @app.post("/api/samples")
 async def add_sample(sample: SampleCreate):
     year = datetime.now().year
-    
-    # 1. Megszámoljuk az idei mintákat az adatbázisban
-    # Keressük azokat, amiknek a labId-je az idei évvel kezdődik
     count = await db.samples.count_documents({
         "labId": {"$regex": f"^KLab/{year}/"}
     })
     
-    # 2. Generáljuk a következő sorszámot (count + 1)
-    # A :03d gondoskodik róla, hogy 001, 002 legyen a formátum
     new_id = f"KLab/{year}/{(count + 1):03d}"
-    
     new_doc = sample.model_dump()
-    new_doc["labId"] = new_id
-    new_doc["status"] = "Pending"
-    new_doc["arrivalDate"] = datetime.now()
+    new_doc.update({
+        "labId": new_id,
+        "status": "Pending",
+        "arrivalDate": datetime.now(),
+        "assayValue": None,
+        "oosId": None
+    })
     
-    # 3. Mentés
     result = await db.samples.insert_one(new_doc)
     new_doc["_id"] = str(result.inserted_id)
-    
-    # Dátumot stringgé alakítjuk a válaszhoz, hogy ne legyen JSON hiba
     new_doc["arrivalDate"] = new_doc["arrivalDate"].isoformat()
-    
     return new_doc
 
 @app.patch("/api/samples/{s_id}")
 async def update_sample(s_id: str, update: ResultUpdate):
-    try:
-        # 1. Megkeressük a mintát
-        sample = await db.samples.find_one({"_id": ObjectId(s_id)})
-        if not sample:
-            raise HTTPException(status_code=404, detail="Nincs meg a minta")
+    if not ObjectId.is_valid(s_id):
+        raise HTTPException(status_code=400, detail="Érvénytelen ID formátum")
+    
+    sample = await db.samples.find_one({"_id": ObjectId(s_id)})
+    if not sample:
+        raise HTTPException(status_code=404, detail="Nincs meg a minta")
 
-        # 2. Logika futtatása
-        val = update.assayValue
-        s_min = sample.get("specMin", 95.0)
-        s_max = sample.get("specMax", 105.0)
-        
-        status = "Completed" if s_min <= val <= s_max else "OOS"
-        oos_id = None
-        
-        if status == "OOS":
-            oos_count = await db.samples.count_documents({"status": "OOS"})
-            oos_id = f"OOS-{datetime.now().year}-{(oos_count + 1):03d}"
+    val = update.assayValue
+    s_min = sample.get("specMin", 95.0)
+    s_max = sample.get("specMax", 105.0)
+    
+    status = "Completed" if s_min <= val <= s_max else "OOS"
+    oos_id = sample.get("oosId")
+    
+    # Csak akkor generálunk új OOS ID-t, ha eddig nem volt, de most OOS lett
+    if status == "OOS" and not oos_id:
+        oos_count = await db.samples.count_documents({"status": "OOS"})
+        oos_id = f"OOS-{datetime.now().year}-{(oos_count + 1):03d}"
 
-        # 3. Mentés az adatbázisba
-        await db.samples.update_one(
-            {"_id": ObjectId(s_id)},
-            {"$set": {"assayValue": val, "status": status, "oosId": oos_id}}
-        )
-        return {"status": status, "oosId": oos_id}
-    except Exception as e:
-        print(f"Hiba a mérésnél: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    await db.samples.update_one(
+        {"_id": ObjectId(s_id)},
+        {"$set": {"assayValue": val, "status": status, "oosId": oos_id}}
+    )
+    return {"status": status, "oosId": oos_id, "assayValue": val}
+
+@app.delete("/api/samples/{s_id}", status_code=204)
+async def delete_sample(s_id: str):
+    if not ObjectId.is_valid(s_id):
+        raise HTTPException(status_code=400, detail="Érvénytelen ID formátum")
+    result = await db.samples.delete_one({"_id": ObjectId(s_id)})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="A minta nem található, így nem törölhető")
+    return None # A 204-es kód nem küld vissza tartalmat
