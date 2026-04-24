@@ -1,6 +1,10 @@
+import os
+
+os.environ["MCP_HOST"] = "0.0.0.0"
+os.environ["MCP_PORT"] = "8000"
+
 from mcp.server.fastmcp import FastMCP
 import httpx
-import os
 
 # MCP inicializálása
 mcp = FastMCP("KLab-LIMS-Assistant")
@@ -37,10 +41,4 @@ async def get_lab_summary():
         return f"Összes minta a rendszerben: {total}, ebből OOS állapotú: {oos}."
 
 if __name__ == "__main__":
-    import uvicorn
-    # Itt a FastMCP belső appját hívjuk meg
-    app = mcp.app 
-    
-    # A host="0.0.0.0" mellett kikapcsoljuk a szigorú host-header ellenőrzést
-    # Ez engedélyezi, hogy IP-címen keresztül is elérd a hálózaton
-    uvicorn.run(app, host="0.0.0.0", port=8000, proxy_headers=True, forwarded_allow_ips="*")
+    mcp.run(transport='sse')
