@@ -23,7 +23,7 @@ db = client.klab_db
 class ResultUpdate(BaseModel):
     assayValue: float
 
-@app.patch("/api/samples/{s_id}")
+@app.patch("/api/results/{s_id}")
 async def update_sample(s_id: str, update: ResultUpdate):
     if not ObjectId.is_valid(s_id):
         raise HTTPException(status_code=400, detail="Érvénytelen ID formátum")
