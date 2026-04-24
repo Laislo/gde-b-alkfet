@@ -11,7 +11,7 @@ Content-Type: application/json
 
 {
     "drugName": "Aspirin 100mg",
-    "batchNumber": "ASP-2026-999",
+    "batchNumber": "ASP-2026-111",
     "specMin": 98.0,
     "specMax": 102.0
 }
@@ -34,5 +34,20 @@ Content-Type: application/json
 ### 5. Minta törlése (SAMPLES SERVICE)
 DELETE {{baseUrl}}/samples/{{sampleId}}
 
-### --- MCP SZERVER ELLENŐRZÉSE (Opcionális) ---
+### 1. SSE Kapcsolat nyitása (Ezt böngészőben is láttad)
 GET http://192.168.1.60:8080/sse
+
+### 2. MCP Inicializálás (Ez a "beszélgetés" kezdete)
+# Az AI modellek ezt a POST-ot küldik el először, hogy megtudják, mit tud a szervered
+POST http://192.168.1.60:8080/messages
+Content-Type: application/json
+
+{
+    "method": "initialize",
+    "params": {
+        "protocolVersion": "2024-11-05",
+        "capabilities": {},
+        "clientInfo": { "name": "Inspector", "version": "1.0.0" }
+    },
+    "id": 1
+}
