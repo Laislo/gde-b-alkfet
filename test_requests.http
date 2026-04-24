@@ -1,32 +1,38 @@
-### Alapváltozók
-@baseUrl = http://localhost:5000/api
-@sampleId = sampleID
+### Alapváltozók beállítása
+@baseUrl = http://192.168.1.60/api
 
-### 1. Új minta létrehozása
+# Ide másold majd be az első POST kérés után kapott _id értéket!
+@sampleId = 69eb44653ef112eaeb43c500
+
+### 1. Új minta létrehozása (SAMPLES SERVICE)
+# @name createSample
 POST {{baseUrl}}/samples
 Content-Type: application/json
 
 {
     "drugName": "Aspirin 100mg",
-    "batchNumber": "ASP-2026-012",
-    "specMin": 95.0,
+    "batchNumber": "ASP-2026-999",
+    "specMin": 98.0,
     "specMax": 102.0
 }
 
-### 2. Összes minta lekérése
+### 2. Összes minta lekérése (SAMPLES SERVICE)
 GET {{baseUrl}}/samples
 
-### 3. Egy konkrét minta lekérése
-# Megjegyzés: Az ID-t másold be a POST válaszából!
+### 3. Egy konkrét minta lekérése (SAMPLES SERVICE)
 GET {{baseUrl}}/samples/{{sampleId}}
 
-### 4. Mérés rögzítése / Frissítés
-PATCH {{baseUrl}}/samples/{{sampleId}}
+### 4. Mérés rögzítése (RESULTS SERVICE)
+# Figyelem: Ez a kérés az Nginx-en keresztül a Results Microservice-hez fut be!
+PATCH {{baseUrl}}/results/{{sampleId}}
 Content-Type: application/json
 
 {
-    "assayValue": 50.5
+    "assayValue": 99.5
 }
 
-### 5. Minta törlése
+### 5. Minta törlése (SAMPLES SERVICE)
 DELETE {{baseUrl}}/samples/{{sampleId}}
+
+### --- MCP SZERVER ELLENŐRZÉSE (Opcionális) ---
+GET http://192.168.1.60:8080/sse

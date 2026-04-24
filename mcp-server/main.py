@@ -39,4 +39,4 @@ async def get_lab_summary():
 if __name__ == "__main__":
     # FONTOS: mcp.run() helyett mcp.run(transport='sse'), 
     # hogy a docker-compose portján keresztül elérhető legyen!
-    mcp.run(transport='sse')
+    mcp.run(transport='sse', host="0.0.0.0", port=8000)
