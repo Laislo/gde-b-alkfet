@@ -35,8 +35,3 @@ async def get_lab_summary():
         total = len(samples)
         oos = len([s for s in samples if s['status'] == 'OOS'])
         return f"Összes minta a rendszerben: {total}, ebből OOS állapotú: {oos}."
-
-if __name__ == "__main__":
-    import os
-    
-    mcp.run(transport='sse')
