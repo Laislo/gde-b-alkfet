@@ -40,10 +40,6 @@ services:
       - "8080:8000"
     environment:
       - SAMPLES_API_URL=http://samples-service:8000
-      - UVICORN_HOST=0.0.0.0
-      - UVICORN_PORT=8000
-      - UVICORN_PROXY_HEADERS=true
-      - UVICORN_FORWARDED_ALLOW_IPS=*
     depends_on:
       - samples-service
     networks:
