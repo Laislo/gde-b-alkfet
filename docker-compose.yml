@@ -36,8 +36,8 @@ services:
   mcp-server:
     image: ghcr.io/laislo/klab-mcp-server:latest
     container_name: klab_mcp_server
-    #ports:
-    #  - "8080:8000"
+    ports:
+      - "8080:8000"
     environment:
       - SAMPLES_API_URL=http://samples-service:8000
       - MCP_SKIP_HOST_VALIDATION=true
