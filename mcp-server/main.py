@@ -41,4 +41,19 @@ async def get_lab_summary():
         return f"Összes minta a rendszerben: {total}, ebből OOS állapotú: {oos}."
 
 if __name__ == "__main__":
-    mcp.run(transport='sse')
+    import uvicorn
+    import os   
+    try:
+        app = getattr(mcp, "app", mcp) 
+        
+        uvicorn.run(
+            app, 
+            host="0.0.0.0", 
+            port=8000,
+            proxy_headers=True,
+            forwarded_allow_ips="*"
+        )
+    except Exception as e:
+        os.environ["MCP_HOST"] = "0.0.0.0"
+        os.environ["MCP_PORT"] = "8000"
+        mcp.run(transport='sse')
