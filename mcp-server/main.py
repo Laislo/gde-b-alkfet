@@ -37,6 +37,12 @@ async def get_lab_summary():
         return f"Összes minta a rendszerben: {total}, ebből OOS állapotú: {oos}."
 
 if __name__ == "__main__":
-    # FONTOS: mcp.run() helyett mcp.run(transport='sse'), 
-    # hogy a docker-compose portján keresztül elérhető legyen!
-    mcp.run(transport='sse', host="0.0.0.0", port=8000)
+    import uvicorn
+    import os
+    app = mcp.get_sse_app()
+    
+    # Környezeti változóból olvassuk, de van alapértelmezett érték
+    host = os.getenv("HOST", "0.0.0.0")
+    port = int(os.getenv("PORT", 8000))
+    
+    uvicorn.run(app, host=host, port=port)
