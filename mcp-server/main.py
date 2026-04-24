@@ -1,8 +1,4 @@
 import os
-
-os.environ["MCP_HOST"] = "0.0.0.0"
-os.environ["MCP_PORT"] = "8000"
-
 from mcp.server.fastmcp import FastMCP
 import httpx
 
@@ -39,6 +35,3 @@ async def get_lab_summary():
         total = len(samples)
         oos = len([s for s in samples if s['status'] == 'OOS'])
         return f"Összes minta a rendszerben: {total}, ebből OOS állapotú: {oos}."
-
-if __name__ == "__main__":
-    mcp.run(transport='sse')
