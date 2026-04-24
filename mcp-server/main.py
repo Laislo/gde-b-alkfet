@@ -37,13 +37,9 @@ async def get_lab_summary():
         return f"Összes minta a rendszerben: {total}, ebből OOS állapotú: {oos}."
 
 if __name__ == "__main__":
-    import uvicorn
     import os
-    from mcp.server.fastmcp.server import StarletteServer
 
-    app = mcp.app
-    # Környezeti változóból olvassuk, de van alapértelmezett érték
-    host = os.getenv("HOST", "0.0.0.0")
-    port = int(os.getenv("PORT", 8000))
+    os.environ["MCP_HOST"] = "0.0.0.0"
+    os.environ["MCP_PORT"] = "8000"
     
-    uvicorn.run(app, host=host, port=port)
+    mcp.run(transport='sse')
