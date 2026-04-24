@@ -3,7 +3,7 @@ from mcp.server.fastmcp import FastMCP
 import httpx
 
 # MCP inicializálása
-mcp = FastMCP("KLab-LIMS-Assistant")
+mcp = FastMCP(name="KLab-LIMS-Assistant", port=8000)
 
 # A belső hálózati URL a Samples szervizhez (Docker hálózaton)
 SAMPLES_URL = os.getenv("SAMPLES_API_URL", "http://samples-service:8000")
@@ -35,3 +35,9 @@ async def get_lab_summary():
         total = len(samples)
         oos = len([s for s in samples if s['status'] == 'OOS'])
         return f"Összes minta a rendszerben: {total}, ebből OOS állapotú: {oos}."
+
+if __name__ == "__main__":
+    mcp.run(
+            transport="sse",
+            host="0.0.0.0",
+        )
