@@ -1,9 +1,13 @@
 import os
+
+os.environ["MCP_HOST"] = "0.0.0.0"
+os.environ["MCP_PORT"] = "8000"
+
 from mcp.server.fastmcp import FastMCP
 import httpx
 
 # MCP inicializálása
-mcp = FastMCP(name="KLab-LIMS-Assistant", port=8000)
+mcp = FastMCP(name="KLab-LIMS-Assistant")
 
 # A belső hálózati URL a Samples szervizhez (Docker hálózaton)
 SAMPLES_URL = os.getenv("SAMPLES_API_URL", "http://samples-service:8000")
@@ -37,24 +41,4 @@ async def get_lab_summary():
         return f"Összes minta a rendszerben: {total}, ebből OOS állapotú: {oos}."
 
 if __name__ == "__main__":
-    import uvicorn
-    import asyncio
-    
-    # Kinyerjük a Starlette appot
-    # A legújabb FastMCP verziókban így érhető el a Starlette példány:
-    app = mcp.get_sse_app() 
-
-    # Uvicorn konfiguráció kényszerítése
-    config = uvicorn.Config(
-        app=app,
-        host="0.0.0.0",
-        port=8000,
-        log_level="info",
-        # Ez a két sor kapcsolja ki a Host Header ellenőrzést:
-        proxy_headers=True,
-        forwarded_allow_ips="*" 
-    )
-    server = uvicorn.Server(config)
-    
-    # Mivel az MCP aszinkron, így kell elindítani:
-    asyncio.run(server.serve())
+    mcp.run(transport='sse')
