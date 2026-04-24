@@ -229,7 +229,7 @@ const App = {
             }
 
             try {
-                const res = await fetch(`/api/samples/${id}`, {
+                const res = await fetch(`/api/results/${id}`, {
                     method: 'PATCH',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ assayValue: value })

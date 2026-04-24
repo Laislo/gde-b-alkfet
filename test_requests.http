@@ -1,6 +1,6 @@
 ### Alapváltozók
-@baseUrl = http://192.168.1.60:5000/api
-@sampleId = 69e7c4b68e04e835f1fd5aae
+@baseUrl = http://localhost:5000/api
+@sampleId = sampleID
 
 ### 1. Új minta létrehozása
 POST {{baseUrl}}/samples
@@ -8,7 +8,7 @@ Content-Type: application/json
 
 {
     "drugName": "Aspirin 100mg",
-    "batchNumber": "ASP-2026-002",
+    "batchNumber": "ASP-2026-012",
     "specMin": 95.0,
     "specMax": 102.0
 }

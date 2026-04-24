@@ -2,28 +2,64 @@ services:
   db:
     image: mongo:latest
     container_name: klab_db
+    # Portot csak akkor hagyj kint, ha külső programból (pl. Compass) is látni akarod az adatbázist
     ports:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    networks:
+      - klab-network
 
-  backend:
-    image: ghcr.io/laislo/klab-backend:latest
-    container_name: klab_backend
-    ports:
-      - "5000:5000"
+  # 1. Microservice: Minták kezelése (Regisztráció, Lista)
+  samples-service:
+    image: ghcr.io/laislo/klab-samples-service:latest
+    container_name: klab_samples_service
     environment:
       - MONGO_URI=mongodb://db:27017
     depends_on:
       - db
+    networks:
+      - klab-network
 
+  # 2. Microservice: Eredmények és OOS logika
+  results-service:
+    image: ghcr.io/laislo/klab-results-service:latest
+    container_name: klab_results_service
+    environment:
+      - MONGO_URI=mongodb://db:27017
+    depends_on:
+      - db
+    networks:
+      - klab-network
+
+  # 3. MCP Szerver: Független AI interfész
+  mcp-server:
+    image: ghcr.io/laislo/klab-mcp-server:latest
+    container_name: klab_mcp_server
+    ports:
+      - "8080:8000"
+    environment:
+      - SAMPLES_API_URL=http://samples-service:8000
+    depends_on:
+      - samples-service
+    networks:
+      - klab-network
+
+  # Frontend: Nginx proxy-val az elején
   frontend:
     image: ghcr.io/laislo/klab-frontend:latest
     container_name: klab_frontend
     ports:
       - "80:80"
     depends_on:
-      - backend
+      - samples-service
+      - results-service
+    networks:
+      - klab-network
 
 volumes:
   mongo_data:
+
+networks:
+  klab-network:
+    driver: bridge
