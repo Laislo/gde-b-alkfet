@@ -3,3 +3,4 @@ httpx
 fastmcp
 starlette
 uvicorn
+asyncio
