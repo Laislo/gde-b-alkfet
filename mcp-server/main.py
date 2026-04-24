@@ -35,3 +35,26 @@ async def get_lab_summary():
         total = len(samples)
         oos = len([s for s in samples if s['status'] == 'OOS'])
         return f"Összes minta a rendszerben: {total}, ebből OOS állapotú: {oos}."
+
+if __name__ == "__main__":
+    import uvicorn
+    import asyncio
+    
+    # Kinyerjük a Starlette appot
+    # A legújabb FastMCP verziókban így érhető el a Starlette példány:
+    app = mcp.get_sse_app() 
+
+    # Uvicorn konfiguráció kényszerítése
+    config = uvicorn.Config(
+        app=app,
+        host="0.0.0.0",
+        port=8000,
+        log_level="info",
+        # Ez a két sor kapcsolja ki a Host Header ellenőrzést:
+        proxy_headers=True,
+        forwarded_allow_ips="*" 
+    )
+    server = uvicorn.Server(config)
+    
+    # Mivel az MCP aszinkron, így kell elindítani:
+    asyncio.run(server.serve())
