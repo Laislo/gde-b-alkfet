@@ -92,3 +92,5 @@ async def handle_sse(request: Request):
 async def handle_messages(request: Request):
     # A beérkező JSON-RPC üzenetek feldolgozása
     await sse.handle_post_message(request.scope, request.receive, request._send)
+    # Üres válasz visszaadása, hogy a FastAPI ne próbáljon meg sajátot generálni
+    return Response(status_code=202)
