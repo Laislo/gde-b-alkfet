@@ -1,10 +1,12 @@
+from wsgiref.validate import validator
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from datetime import datetime
 from bson import ObjectId
-from pydantic import BaseModel, model_validator
+from pydantic import BaseModel, model_validator, validator
 import os
 
 from contextlib import asynccontextmanager
@@ -26,6 +28,14 @@ db = client.klab_db
 class ResultUpdate(BaseModel):
     assayValue: float
 
+    @validator("assayValue")
+    def assay_must_be_valid(cls, v):
+        if v < 0:
+            raise ValueError("Az assay érték nem lehet negatív")
+        if v > 200:
+            raise ValueError("Az assay érték nem lehet 200% felett")
+        return v
+
 @app.patch("/api/results/{s_id}")
 async def update_sample(s_id: str, update: ResultUpdate):
     if not ObjectId.is_valid(s_id):
@@ -34,7 +44,7 @@ async def update_sample(s_id: str, update: ResultUpdate):
     sample = await db.samples.find_one({"_id": ObjectId(s_id)})
     if not sample:
         raise HTTPException(status_code=404, detail="Nincs meg a minta")
-
+    
     val = update.assayValue
     s_min = sample.get("specMin", 95.0)
     s_max = sample.get("specMax", 105.0)
