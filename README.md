@@ -167,6 +167,7 @@ curl -X POST "http://<SERVER_IP>:8080/messages?session_id=<session_id>" \
 
 ### Elérhető MCP funkciók
 
+- get_system_info: rendszerinformáció lekérése.
 - get_all_samples: Összes laboratóriumi minta listázása.
 - get_lab_summary: Statisztikai összegzés (Összes minta, OOS darabszám).
 - check_sample_history: Egy konkrét minta részletes adatai lab_id alapján.
@@ -217,3 +218,34 @@ curl -X POST "http://192.168.1.60:8080/messages?session_id=IDE_AZ_IDT" \
   }
 }'
 ```
+
+### Claude Desktop összekötés
+
+Menü->File->Settings...->Developer->Edit config
+
+Az itt található **claude_desktop_config.json** fájlt módosítsuk az alábbi szerint
+
+```json
+{
+  "preferences": {
+    "coworkWebSearchEnabled": true,
+    "coworkScheduledTasksEnabled": false,
+    "ccdScheduledTasksEnabled": false
+  },
+  "mcpServers": {
+    "klab-lims": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "http://SZERVER_IP:8080/sse",
+		"--allow-http"
+      ]
+    }
+  }
+}
+```
+
+Indítsuk újra a Claude-ot (jobb klikk az óra melletti ikonon, Quit, majd nyissuk meg újra).
+Ezután a Developers alatt megjelenik a **Local MCP Servers** alatt a **klab-lims** néven és **running** állapotban. Más esetben hibára futott.
+
+Ezután már lekérhetjük, milyen toolokat érünk el, milyen adatokhoz tudunk hozzáférni.
