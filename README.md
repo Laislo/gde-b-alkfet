@@ -5,7 +5,7 @@
 Ebben a projektben egy LIMS (Laboratory Information Management System - Laboratóriumi Információkezelő Rendszer) került megvalósításra.
 Labóratóriumi minták rögzítésének lehetősége, ezen minták fontos adatai a hatóanyag, sarzsszám, minimum és maximum érték, amik között a mérés megfelelő, ellenben OOS jelölést kap (Out of specification).
 
-## Rendszer felépítése
+### Rendszer felépítése
 
 A rendszer Docker alapokra építve készült el.
 
@@ -36,3 +36,30 @@ A rendszer Docker alapokra építve készült el.
 | **MongoDB** | MongoDB 8.0 | 27017 | adatok tárolása, samples és results-service-ektől érkező adatok |
 
 ---
+
+## Telepítés
+
+Ubuntu LTS 24 Server alatt tesztelve.
+
+### Előfeltételek
+
+A telepítéshez, használathoz szükségünk lesz az alábbiakra:
+
+- docker
+- docker-compose
+- 80 és 8080-as portok elérhetősége
+
+### Lépések
+
+1. repository klónozása
+
+```bash
+git clone https://github.com/Laislo/gde-b-alkfet.git
+cd gde-b-alkfet
+```
+
+2. konténerek elindítása
+
+```bash
+docker compose up --build -d
+```
