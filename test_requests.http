@@ -34,17 +34,22 @@ Content-Type: application/json
 ### 5. Minta törlése (SAMPLES SERVICE)
 DELETE {{baseUrl}}/samples/{{sampleId}}
 
+### Alapváltozók
+@baseUrl = http://192.168.1.60:8080
+# FONTOS: Ezt a session_id-t az 1. lépés válaszából kell majd kimásolnod!
+@session_id = dd8b90743a324234a9223fc6deff4533
+
 ### 1. SSE Kapcsolat megnyitása
-GET http://192.168.1.60:8080/sse
-##Accept: text/event-stream
+# Amikor ezt lefuttatod, a válaszban (vagy a "Stream" fülön) keress egy 
+# 'endpoint' vagy 'session_id' paramétert!
+GET {{baseUrl}}/sse
+Accept: text/event-stream
 
 ###
 
-@session_id = 2ed18ce6a6cf484a8cefa8cafef8eb85
-
 ### 2. MCP Inicializálás (Kötelező első lépés)
-# Ezt kell küldened először, hogy a szerver tudja, ki vagy.
-POST http://192.168.1.60:8080/messages?session_id={{session_id}}
+# Megjegyzés: Ha a szerver a ?session_id= formátumot várja, így használd:
+POST {{baseUrl}}/messages?session_id={{session_id}}
 Content-Type: application/json
 
 {
@@ -61,9 +66,17 @@ Content-Type: application/json
   }
 }
 
-### 3. Toolok listázása
-# Lekéri, milyen funkciók érhetőek el a szerveren.
-POST http://192.168.1.60:8080/messages?session_id={{session_id}}
+### 3. Inicializálás nyugtázása (MCP Specifikáció szerint ajánlott)
+POST {{baseUrl}}/messages?session_id={{session_id}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "method": "notifications/initialized"
+}
+
+### 4. Toolok listázása
+POST {{baseUrl}}/messages?session_id={{session_id}}
 Content-Type: application/json
 
 {
@@ -72,9 +85,8 @@ Content-Type: application/json
   "method": "tools/list"
 }
 
-### 4. Tool hívása (get_lab_summary)
-# Itt teszteljük a tényleges üzleti logikát.
-POST http://192.168.1.60:8080/messages?session_id={{session_id}}
+### 5. Tool hívása (get_lab_summary)
+POST {{baseUrl}}/messages?session_id={{session_id}}
 Content-Type: application/json
 
 {
@@ -87,8 +99,9 @@ Content-Type: application/json
   }
 }
 
-### 5. Tool hívása paraméterrel (check_sample_history)
-POST http://192.168.1.60:8080/messages?session_id={{session_id}}
+### 6. Tool hívása paraméterrel (check_sample_history)
+# Ügyelj rá, hogy a lab_id létezzen a Samples adatbázisodban!
+POST {{baseUrl}}/messages?session_id={{session_id}}
 Content-Type: application/json
 
 {

@@ -91,4 +91,4 @@ async def handle_sse(request: Request):
 @mcp_web_app.post("/messages")
 async def handle_messages(request: Request):
     # A beérkező JSON-RPC üzenetek feldolgozása
-    await sse.handle_post_request(request.scope, request.receive, request._send)
+    await sse.handle_post_message(request.scope, request.receive, request._send)
