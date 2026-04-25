@@ -6,7 +6,7 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 from datetime import datetime
 from bson import ObjectId
-from pydantic import BaseModel, model_validator, validator
+from pydantic import BaseModel, field_validator
 import os
 
 from contextlib import asynccontextmanager
@@ -28,7 +28,8 @@ db = client.klab_db
 class ResultUpdate(BaseModel):
     assayValue: float
 
-    @validator("assayValue")
+    @field_validator("assayValue")
+    @classmethod
     def assay_must_be_valid(cls, v):
         if v < 0:
             raise ValueError("Az assay érték nem lehet negatív")
