@@ -3,8 +3,8 @@ services:
     image: mongo:latest
     container_name: klab_db
     # Portot csak akkor hagyj kint, ha külső programból (pl. Compass) is látni akarod az adatbázist
-    ports:
-      - "27017:27017"
+    #ports:
+    #  - "27017:27017"
     volumes:
       - mongo_data:/data/db
     networks:
