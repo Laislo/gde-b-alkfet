@@ -210,7 +210,7 @@ const App = {
                     await fetchSamples();
                 } else {
                     if (Array.isArray(data.detail)) {
-                        errorMessage.value = data.detail[0].msg;
+                        errorMessage.value = data.detail.map(e => e.msg).join(", ");
                     } else if (typeof data.detail === 'string') {
                         errorMessage.value = data.detail;
                     } else {
@@ -239,7 +239,17 @@ const App = {
                     await fetchSamples();
                 } else {
                     const err = await res.json();
-                    alert("Hiba: " + (err.detail || "Sikertelen mentés"));
+                    let message = "Sikertelen mentés";
+
+                    if (typeof err.detail === 'string') {
+                        // FastAPI HTTPException: { detail: "szöveg" }
+                        message = err.detail;
+                    } else if (Array.isArray(err.detail)) {
+                        // FastAPI validációs hiba: { detail: [{ msg: "szöveg" }] }
+                        message = err.detail.map(e => e.msg).join(", ");
+                    }
+
+                    alert("Hiba: " + message);
                 }
             } catch (err) {
                 alert("Nem sikerült elérni a szervert.");
