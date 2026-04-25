@@ -13,6 +13,7 @@ services:
   # 1. Microservice: Minták kezelése (Regisztráció, Lista)
   samples-service:
     image: ghcr.io/laislo/klab-samples-service:latest
+    build: ./samples-service
     container_name: klab_samples_service
     environment:
       - MONGO_URI=mongodb://db:27017
@@ -24,6 +25,7 @@ services:
   # 2. Microservice: Eredmények és OOS logika
   results-service:
     image: ghcr.io/laislo/klab-results-service:latest
+    build: ./results-service
     container_name: klab_results_service
     environment:
       - MONGO_URI=mongodb://db:27017
@@ -35,6 +37,7 @@ services:
   # 3. MCP Szerver: Független AI interfész
   mcp-server:
     image: ghcr.io/laislo/klab-mcp-server:latest
+    build: ./mcp-server
     container_name: klab_mcp_server
     ports:
       - "8080:8000"
@@ -50,6 +53,7 @@ services:
   # Frontend: Nginx proxy-val az elején
   frontend:
     image: ghcr.io/laislo/klab-frontend:latest
+    build: ./frontend
     container_name: klab_frontend
     ports:
       - "80:80"
