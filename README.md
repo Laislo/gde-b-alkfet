@@ -49,6 +49,11 @@ A telepítéshez, használathoz szükségünk lesz az alábbiakra:
 - docker-compose
 - 80 és 8080-as portok elérhetősége
 
+#### Docker desktop
+
+Ezzel is tesztelve.
+- Letöltés: https://www.docker.com/get-started/
+
 ### Lépések
 
 1. repository klónozása
@@ -58,10 +63,18 @@ git clone https://github.com/Laislo/gde-b-alkfet.git
 cd gde-b-alkfet
 ```
 
+Docker Desktop esetén a **docker-compose.yml** fájlra lesz szükség.
+
 2. konténerek elindítása
 
 ```bash
 docker compose up --build -d
+```
+
+Docker Desktop esetén, fusson a Docker Desktop, nyissunk egy parancssort, navigáljunk a oda, ahova a **docker-compose.yml** le lett töltve, majd futtassuk az alábbi parancsot
+
+```bash
+docker compose up
 ```
 
 3. konténerek állapotának ellenőrzése
@@ -85,15 +98,19 @@ bdbbc67cf57a   ghcr.io/laislo/klab-frontend:latest          klab_frontend       
 cf950327f802   ghcr.io/laislo/klab-mcp-server:latest        klab_mcp_server        Up 4 minutes
 1dd9141db9f9   ghcr.io/laislo/klab-samples-service:latest   klab_samples_service   Up 12 minutes
 3bcb42f862a1   ghcr.io/laislo/klab-results-service:latest   klab_results_service   Up 12 minutes
-a73e08674947   mongo:latest                                 klab_db                Up 12 minutes                                                                                     klab_db
+a73e08674947   mongo:latest                                 klab_db                Up 12 minutes
 ```
+
+Docker Desktop esetén a paranccsorból való indítás után a **View in Docker Desktop** lehetőséggel tudjuk ellenőrizni. Ezután meg tudjuk nyitni a böngészőben is.
+
 ## Használat, ellenőrzés
 
 Innentől, hogy fut minden konténer, megnyithatjuk a böngészőben.
 
 Esetemben egy különálló gépen futtattam a környezetet.
-Saját gépen futtatva: **http://localhost**
-Külön szerveren futtatva: **http://SERVERIP**
+
+- Saját gépen futtatva: **http://localhost**
+- Külön szerveren futtatva: **http://SERVERIP**
 
 Ezzel a LIMS rendszer grafikus felületét láthatjuk, ide tudunk felvinni mintákat.
 Minden új minta **PENDING** állapotban jön létre, egészen addig amíg a **Minták listája** felületen nem kerül rögzítésre eredmény.
