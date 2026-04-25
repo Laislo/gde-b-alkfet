@@ -38,6 +38,9 @@ async def update_sample(s_id: str, update: ResultUpdate):
     
     status = "Completed" if s_min <= val <= s_max else "OOS"
     oos_id = sample.get("oosId")
+
+    # Időbélyeg generálása a lezáráshoz
+    now = datetime.now()
     
     # Csak akkor generálunk új OOS ID-t, ha eddig nem volt, de most OOS lett
     if status == "OOS" and not oos_id:
@@ -46,6 +49,6 @@ async def update_sample(s_id: str, update: ResultUpdate):
 
     await db.samples.update_one(
         {"_id": ObjectId(s_id)},
-        {"$set": {"assayValue": val, "status": status, "oosId": oos_id}}
+        {"$set": {"assayValue": val, "status": status, "oosId": oos_id, "completedAt": now}}
     )
-    return {"status": status, "oosId": oos_id, "assayValue": val}
+    return {"status": status, "oosId": oos_id, "assayValue": val, "completedAt": now.isoformat()}

@@ -41,6 +41,18 @@ async def handle_list_tools():
             name="get_lab_summary",
             description="Összegző statisztikát készít a labor aktuális mintáiról.",
             inputSchema={"type": "object", "properties": {}},
+        ),
+        types.Tool(
+            name="complete_sample",
+            description="Rögzíti a mérési eredményt és lezárja a mintát a jelenlegi időponttal.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "lab_id": {"type": "string", "description": "A minta Lab ID-ja (pl. KLab/2026/001)"},
+                    "assay_value": {"type": "number", "description": "A mért hatóanyagtartalom vagy mérési eredmény"}
+                },
+                "required": ["lab_id", "assay_value"]
+            },
         )
     ]
 
@@ -69,6 +81,25 @@ async def handle_call_tool(name: str, arguments: dict | None):
             total = len(samples)
             oos = len([s for s in samples if s.get('status') == 'OOS'])
             return [types.TextContent(type="text", text=f"Összes minta: {total}, ebből OOS: {oos}.")]
+        
+        elif name == "complete_sample":
+            lab_id = arguments.get("lab_id")
+            assay_value = arguments.get("assay_value")
+            
+            # Meghívjuk a backend PATCH végpontját
+            resp = await client.patch(
+                f"{SAMPLES_URL}/api/samples/labid/{lab_id}/complete",
+                params={"assayValue": assay_value}
+            )
+            
+            if resp.status_code == 200:
+                data = resp.json()
+                return [types.TextContent(
+                    type="text", 
+                    text=f"Sikeres lezárás! LabID: {data['labId']}, Státusz: {data['status']}, Lezárva: {data['completedAt']}"
+                )]
+            else:
+                return [types.TextContent(type="text", text=f"Hiba a lezárás során: {resp.text}")]
 
     raise ValueError(f"Ismeretlen tool: {name}")
 
