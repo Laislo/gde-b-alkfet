@@ -11,6 +11,7 @@ from starlette.responses import Response
 app_mcp = Server("KLab-LIMS-Assistant-Server")
 
 SAMPLES_URL = os.getenv("SAMPLES_API_URL", "http://samples-service:8000")
+RESULTS_URL = os.getenv("RESULTS_API_URL", "http://results-service:8000")
 
 # --- Regisztrált Toolok ---
 @app_mcp.list_tools()
@@ -86,10 +87,10 @@ async def handle_call_tool(name: str, arguments: dict | None):
             lab_id = arguments.get("lab_id")
             assay_value = arguments.get("assay_value")
             
-            # Meghívjuk a backend PATCH végpontját
+            # Meghívjuk a results-service PATCH végpontját
             resp = await client.patch(
-                f"{SAMPLES_URL}/api/samples/labid/{lab_id}/complete",
-                params={"assayValue": assay_value}
+                f"{RESULTS_URL}/api/results/labid/{lab_id}",
+                json={"assayValue": assay_value}
             )
             
             if resp.status_code == 200:

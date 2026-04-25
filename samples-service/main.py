@@ -7,7 +7,17 @@ from bson import ObjectId
 from pydantic import BaseModel, model_validator
 import os
 
-app = FastAPI(title="KLab LIMS Samples Service")
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup
+    await create_indexes()
+    yield
+    # Shutdown (ha kell)
+
+app = FastAPI(title="KLab LIMS Samples Service", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -21,7 +31,6 @@ client = AsyncIOMotorClient(os.getenv("MONGO_URI", "mongodb://db:27017"))
 db = client.klab_db
 
 # ÚJ: Egyedi indexek létrehozása az indításkor
-@app.on_event("startup")
 async def create_indexes():
     await db.samples.create_index("labId", unique=True)
     await db.samples.create_index("batchNumber", unique=True)

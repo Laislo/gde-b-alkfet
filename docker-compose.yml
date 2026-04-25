@@ -43,6 +43,7 @@ services:
       - "8080:8000"
     environment:
       - SAMPLES_API_URL=http://samples-service:8000
+      - RESULTS_API_URL=http://results-service:8000
       - PYTHONUNBUFFERED=1
       - ENV=production
     depends_on:

@@ -7,6 +7,9 @@ from bson import ObjectId
 from pydantic import BaseModel, model_validator
 import os
 
+from contextlib import asynccontextmanager
+from fastapi import FastAPI
+
 app = FastAPI(title="KLab LIMS Results Service")
 
 app.add_middleware(
