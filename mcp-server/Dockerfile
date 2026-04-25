@@ -6,7 +6,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# A 8000-es porton fog figyelni a FastAPI
 EXPOSE 8000
 
-CMD ["uvicorn", "main:mcp_web_app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:mcp_web_app", "--host", "0.0.0.0", "--port", "8000", "--forwarded-allow-ips", "*"]

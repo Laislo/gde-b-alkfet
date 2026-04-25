@@ -1,20 +1,18 @@
 import os
 import httpx
+import asyncio
 import mcp.types as types
 from mcp.server import Server
 from mcp.server.sse import SseServerTransport
-from fastapi import FastAPI
-from fastapi import Request
-from starlette.requests import Request
+from fastapi import FastAPI, Request
+from starlette.responses import Response
 
-# 1. MCP Szerver inicializálása (az üzleti logika)
+# 1. MCP Szerver inicializálása
 app_mcp = Server("KLab-LIMS-Assistant-Server")
 
-# A belső hálózati URL a Samples szervizhez
 SAMPLES_URL = os.getenv("SAMPLES_API_URL", "http://samples-service:8000")
 
 # --- Regisztrált Toolok ---
-
 @app_mcp.list_tools()
 async def handle_list_tools():
     return [
@@ -74,12 +72,15 @@ async def handle_call_tool(name: str, arguments: dict | None):
 
     raise ValueError(f"Ismeretlen tool: {name}")
 
-# 2. FastAPI és SSE transport beállítása (a hálózati réteg)
+# 2. FastAPI és SSE transport beállítása
 mcp_web_app = FastAPI(title="Klab-LIMS-Assistant")
+
+# Fontos: A SseServerTransport-nak szüksége van egy alap URL-re a /messages-hez
 sse = SseServerTransport("/messages")
 
 @mcp_web_app.get("/sse")
 async def handle_sse(request: Request):
+    # Az SSE kapcsolat létrejöttekor az SDK kezeli a streamet
     async with sse.connect_sse(request.scope, request.receive, request._send) as (read_stream, write_stream):
         await app_mcp.run(
             read_stream,
@@ -89,4 +90,5 @@ async def handle_sse(request: Request):
 
 @mcp_web_app.post("/messages")
 async def handle_messages(request: Request):
+    # A beérkező JSON-RPC üzenetek feldolgozása
     await sse.handle_post_request(request.scope, request.receive, request._send)

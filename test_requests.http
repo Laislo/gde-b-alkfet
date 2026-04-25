@@ -1,5 +1,5 @@
 ### Alapváltozók beállítása
-@baseUrl = http://SZERVER_IP/api
+@baseUrl = http://192.168.1.60/api
 
 # Ide másold majd be az első POST kérés után kapott _id értéket!
 @sampleId = 69eb44653ef112eaeb43c500
@@ -35,14 +35,16 @@ Content-Type: application/json
 DELETE {{baseUrl}}/samples/{{sampleId}}
 
 ### 1. SSE Kapcsolat megnyitása
-GET http://SZERVER_IP:8080/sse
-Accept: text/event-stream
+GET http://192.168.1.60:8080/sse
+##Accept: text/event-stream
 
-@session_id = b90e3b7d51294e9d90b1c0d784c9ffb8
+###
+
+@session_id = 2ed18ce6a6cf484a8cefa8cafef8eb85
 
 ### 2. MCP Inicializálás (Kötelező első lépés)
 # Ezt kell küldened először, hogy a szerver tudja, ki vagy.
-POST http://SZERVER_IP:8080/messages?session_id={{session_id}}
+POST http://192.168.1.60:8080/messages?session_id={{session_id}}
 Content-Type: application/json
 
 {
@@ -61,7 +63,7 @@ Content-Type: application/json
 
 ### 3. Toolok listázása
 # Lekéri, milyen funkciók érhetőek el a szerveren.
-POST http://SZERVER_IP:8080/messages?session_id={{session_id}}
+POST http://192.168.1.60:8080/messages?session_id={{session_id}}
 Content-Type: application/json
 
 {
@@ -72,7 +74,7 @@ Content-Type: application/json
 
 ### 4. Tool hívása (get_lab_summary)
 # Itt teszteljük a tényleges üzleti logikát.
-POST http://SZERVER_IP:8080/messages?session_id={{session_id}}
+POST http://192.168.1.60:8080/messages?session_id={{session_id}}
 Content-Type: application/json
 
 {
@@ -86,7 +88,7 @@ Content-Type: application/json
 }
 
 ### 5. Tool hívása paraméterrel (check_sample_history)
-POST http://SZERVER_IP:8080/messages?session_id={{session_id}}
+POST http://192.168.1.60:8080/messages?session_id={{session_id}}
 Content-Type: application/json
 
 {
