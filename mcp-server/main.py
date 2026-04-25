@@ -18,7 +18,7 @@ async def handle_list_tools():
     return [
         types.Tool(
             name="get_system_info",
-            description="Lekéri a távoli Ubuntu szerver adatait",
+            description="Lekéri a távoli szerver adatait",
             inputSchema={"type": "object", "properties": {}},
         ),
         types.Tool(
@@ -48,7 +48,7 @@ async def handle_list_tools():
 async def handle_call_tool(name: str, arguments: dict | None):
     async with httpx.AsyncClient() as client:
         if name == "get_system_info":
-            return [types.TextContent(type="text", text="Üdvözlet az Ubuntu Docker konténerből!")]
+            return [types.TextContent(type="text", text="Üdvözlet a Docker konténerből!")]
 
         elif name == "get_all_samples":
             resp = await client.get(f"{SAMPLES_URL}/api/samples")

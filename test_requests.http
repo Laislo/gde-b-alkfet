@@ -1,8 +1,8 @@
 ### Alapváltozók beállítása
-@baseUrl = http://192.168.1.60/api
+@baseUrl = http://SERVER_IP/api
 
 # Ide másold majd be az első POST kérés után kapott _id értéket!
-@sampleId = 69eb44653ef112eaeb43c500
+@sampleId = SampleID_from_samples
 
 ### 1. Új minta létrehozása (SAMPLES SERVICE)
 # @name createSample
@@ -35,9 +35,9 @@ Content-Type: application/json
 DELETE {{baseUrl}}/samples/{{sampleId}}
 
 ### Alapváltozók
-@baseUrl = http://192.168.1.60:8080
+@baseUrl = http://SERVER_IP:8080
 # FONTOS: Ezt a session_id-t az 1. lépés válaszából kell majd kimásolnod!
-@session_id = dd8b90743a324234a9223fc6deff4533
+@session_id = SessionID_from_SSE_response
 
 ### 1. SSE Kapcsolat megnyitása
 # Amikor ezt lefuttatod, a válaszban (vagy a "Stream" fülön) keress egy 
