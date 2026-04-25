@@ -27,7 +27,7 @@ async def handle_list_tools():
             name="get_all_samples",
             description="Lekéri az összes laboratóriumi minta listáját elemzésre.",
             inputSchema={"type": "object", "properties": {}},
-        ),,
+        ),
         types.Tool(
             name="check_sample_history",
             description="Lekéri egy konkrét minta adatait a Lab ID alapján.",
