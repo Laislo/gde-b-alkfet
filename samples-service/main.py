@@ -102,6 +102,26 @@ async def add_sample(sample: SampleCreate):
         # Ha valamiért mégis becsúszna egy duplikáció az index miatt
         raise HTTPException(status_code=500, detail="Adatbázis hiba az azonosító generálásakor.")
 
+# --- ÚJ: Minta lekérése Lab ID alapján ---
+@app.get("/api/samples/labid/{lab_id}")
+async def get_sample_by_labid(lab_id: str):
+    # Itt a pontos Lab ID-ra szűrünk (pl. KLab/2026/001)
+    doc = await db.samples.find_one({"labId": lab_id})
+    if not doc:
+        raise HTTPException(status_code=404, detail="Minta nem található ezzel a Lab ID-val")
+    return fix_id(doc)
+
+@app.patch("/api/samples/labid/{lab_id}/internal-update")
+async def internal_update_sample(lab_id: str, update_data: dict):
+    """Belső végpont, amit a results-service hívhat meg"""
+    result = await db.samples.update_one(
+        {"labId": lab_id},
+        {"$set": update_data}
+    )
+    if result.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Nincs mit frissíteni")
+    return {"status": "success"}
+
 @app.delete("/api/samples/{s_id}", status_code=204)
 async def delete_sample(s_id: str):
     if not ObjectId.is_valid(s_id):
