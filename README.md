@@ -29,7 +29,7 @@ A rendszer Docker alapokra építve készült el.
 
 | Komponens | Technológia | Port | Leírás |
 |-----------|-------------|------|--------|
-| **frontend** | Vue.JS, Nginx | 80 | Frontend alkalmazás |
+| **frontend** | Vue.JS + TailWind CSS, Nginx | 80 | Frontend alkalmazás |
 | **samples-service** | FastAPI | 8000 | REST API gateway - samples |
 | **results-service** | FastAPI | 8000 | REST API gateway - results |
 | **mcp-server** | MCP + FastAPI | 8080 | MCP server (SSE) — AI tool - csak a samples-service-hez csatlakozik |
@@ -63,3 +63,38 @@ cd gde-b-alkfet
 ```bash
 docker compose up --build -d
 ```
+
+3. konténerek állapotának ellenőrzése
+
+Az összes információ mutatása a futó konténerekről:
+
+```bash
+docker ps
+```
+
+Kicsit konszolidáltabb kimenet.
+
+```bash
+docker ps --format "table {{.ID}}\t{{.Image}}\t{{.Names}}\t{{.Status}}"
+```
+A megfelelő működés esetén egy listát kapunk, amiben látjuk a futó konténereket.
+
+```
+CONTAINER ID   IMAGE                                        NAMES                  STATUS
+bdbbc67cf57a   ghcr.io/laislo/klab-frontend:latest          klab_frontend          Up 12 minutes
+cf950327f802   ghcr.io/laislo/klab-mcp-server:latest        klab_mcp_server        Up 4 minutes
+1dd9141db9f9   ghcr.io/laislo/klab-samples-service:latest   klab_samples_service   Up 12 minutes
+3bcb42f862a1   ghcr.io/laislo/klab-results-service:latest   klab_results_service   Up 12 minutes
+a73e08674947   mongo:latest                                 klab_db                Up 12 minutes                                                                                     klab_db
+```
+## Használat, ellenőrzés
+
+Innentől, hogy fut minden konténer, megnyithatjuk a böngészőben.
+
+Esetemben egy különálló gépen futtattam a környezetet.
+Saját gépen futtatva: **http://localhost**
+Külön szerveren futtatva: **http://SERVERIP**
+
+Ezzel a LIMS rendszer grafikus felületét láthatjuk, ide tudunk felvinni mintákat.
+Minden új minta **PENDING** állapotban jön létre, egészen addig amíg a **Minták listája** felületen nem kerül rögzítésre eredmény.
+A minta regisztrálásakor megadott határértékektől függően a rögzített mérési érték alapján lehet **COMPLETED** vagy **OOS**.
