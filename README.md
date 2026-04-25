@@ -130,27 +130,22 @@ A minta regisztrálásakor megadott határértékektől függően a rögzített 
 
 GET
 
-- /api/samples
-    az összes feltöltött minta listázása
-- /api/samples/{s_id}
-    megadott minta adatainak lekérdezése
+- /api/samples - az összes feltöltött minta listázása
+- /api/samples/{s_id} - megadott minta adatainak lekérdezése
 
 POST
 
-- /api/samples
-    új minta feltöltése
+- /api/samples - új minta feltöltése
 
 DELETE
 
-- /api/samples/{s_id}
-    megadott minta törlése
+- /api/samples/{s_id} - megadott minta törlése
 
 ### Results
 
 PATCH
 
-- /api/results/{s_id}
-    megadott mintához történő érték rögzítése
+- /api/results/{s_id} - megadott mintához történő érték rögzítése
 
 ## MCP szerver
 
@@ -175,3 +170,50 @@ curl -X POST "http://<SERVER_IP>:8080/messages?session_id=<session_id>" \
 - get_all_samples: Összes laboratóriumi minta listázása.
 - get_lab_summary: Statisztikai összegzés (Összes minta, OOS darabszám).
 - check_sample_history: Egy konkrét minta részletes adatai lab_id alapján.
+
+get_all_samples
+```bash
+curl -X POST "http://192.168.1.60:8080/messages?session_id=<session_id>" \
+-H "Content-Type: application/json" \
+-d '{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "get_all_samples",
+    "arguments": {}
+  }
+}'
+```
+
+get_lab_summary
+```bash
+curl -X POST "http://192.168.1.60:8080/messages?session_id=<session_id>" \
+-H "Content-Type: application/json" \
+-d '{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/call",
+  "params": {
+    "name": "get_lab_summary",
+    "arguments": {}
+  }
+}'
+```
+
+check_sample_history (példa: KLab/2026/001, ha már hoztunk létre egy mintát)
+```bash
+curl -X POST "http://192.168.1.60:8080/messages?session_id=IDE_AZ_IDT" \
+-H "Content-Type: application/json" \
+-d '{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "method": "tools/call",
+  "params": {
+    "name": "check_sample_history",
+    "arguments": {
+      "lab_id": "KLab/2026/001"
+    }
+  }
+}'
+```
