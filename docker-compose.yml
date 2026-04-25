@@ -40,8 +40,8 @@ services:
       - "8080:8000"
     environment:
       - SAMPLES_API_URL=http://samples-service:8000
-      - MCP_SKIP_HOST_VALIDATION=true
-      - UVICORN_FORWARDED_ALLOW_IPS=*
+      - PYTHONUNBUFFERED=1
+      - ENV=production
     depends_on:
       - samples-service
     networks:

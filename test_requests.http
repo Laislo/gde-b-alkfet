@@ -1,5 +1,5 @@
 ### Alapváltozók beállítása
-@baseUrl = http://192.168.1.60/api
+@baseUrl = http://SZERVER_IP/api
 
 # Ide másold majd be az első POST kérés után kapott _id értéket!
 @sampleId = 69eb44653ef112eaeb43c500
@@ -34,20 +34,69 @@ Content-Type: application/json
 ### 5. Minta törlése (SAMPLES SERVICE)
 DELETE {{baseUrl}}/samples/{{sampleId}}
 
-### 1. SSE Kapcsolat nyitása (Ezt böngészőben is láttad)
-GET http://192.168.1.60/mcp/sse
+### 1. SSE Kapcsolat megnyitása
+GET http://SZERVER_IP:8080/sse
+Accept: text/event-stream
 
-### 2. MCP Inicializálás (Ez a "beszélgetés" kezdete)
-# Az AI modellek ezt a POST-ot küldik el először, hogy megtudják, mit tud a szervered
-POST http://192.168.1.60/mcp/messages
+@session_id = b90e3b7d51294e9d90b1c0d784c9ffb8
+
+### 2. MCP Inicializálás (Kötelező első lépés)
+# Ezt kell küldened először, hogy a szerver tudja, ki vagy.
+POST http://SZERVER_IP:8080/messages?session_id={{session_id}}
 Content-Type: application/json
 
 {
-    "method": "initialize",
-    "params": {
-        "protocolVersion": "2024-11-05",
-        "capabilities": {},
-        "clientInfo": { "name": "Inspector", "version": "1.0.0" }
-    },
-    "id": 1
+  "jsonrpc": "2.0",
+  "id": 1,
+  "method": "initialize",
+  "params": {
+    "protocolVersion": "2024-11-05",
+    "capabilities": {},
+    "clientInfo": {
+      "name": "vscode-rest-client",
+      "version": "1.0.0"
+    }
+  }
+}
+
+### 3. Toolok listázása
+# Lekéri, milyen funkciók érhetőek el a szerveren.
+POST http://SZERVER_IP:8080/messages?session_id={{session_id}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 2,
+  "method": "tools/list"
+}
+
+### 4. Tool hívása (get_lab_summary)
+# Itt teszteljük a tényleges üzleti logikát.
+POST http://SZERVER_IP:8080/messages?session_id={{session_id}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 3,
+  "method": "tools/call",
+  "params": {
+    "name": "get_lab_summary",
+    "arguments": {}
+  }
+}
+
+### 5. Tool hívása paraméterrel (check_sample_history)
+POST http://SZERVER_IP:8080/messages?session_id={{session_id}}
+Content-Type: application/json
+
+{
+  "jsonrpc": "2.0",
+  "id": 4,
+  "method": "tools/call",
+  "params": {
+    "name": "check_sample_history",
+    "arguments": {
+      "lab_id": "LIMS-12345"
+    }
+  }
 }

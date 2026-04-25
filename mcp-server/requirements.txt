@@ -1,6 +1,4 @@
-mcp[cli]
-httpx
-fastmcp
-starlette
+mcp
+fastapi
 uvicorn
-asyncio
+httpx
