@@ -49,11 +49,6 @@ A telepítéshez, használathoz szükségünk lesz az alábbiakra:
 - docker-compose
 - 80 és 8080-as portok elérhetősége
 
-#### Docker desktop
-
-Ezzel is tesztelve.
-- Letöltés: https://www.docker.com/get-started/
-
 ### Lépések
 
 1. repository klónozása
@@ -63,18 +58,10 @@ git clone https://github.com/Laislo/gde-b-alkfet.git
 cd gde-b-alkfet
 ```
 
-Docker Desktop esetén a **docker-compose.yml** fájlra lesz szükség.
-
 2. konténerek elindítása
 
 ```bash
 docker compose up --build -d
-```
-
-Docker Desktop esetén, fusson a Docker Desktop, nyissunk egy parancssort, navigáljunk a oda, ahova a **docker-compose.yml** le lett töltve, majd futtassuk az alábbi parancsot
-
-```bash
-docker compose up
 ```
 
 3. konténerek állapotának ellenőrzése
@@ -101,6 +88,27 @@ cf950327f802   ghcr.io/laislo/klab-mcp-server:latest        klab_mcp_server     
 a73e08674947   mongo:latest                                 klab_db                Up 12 minutes
 ```
 
+### Docker desktop
+
+Ezzel is tesztelve.
+- Letöltés: https://www.docker.com/get-started/
+
+1. docker-compose.yml letöltése
+
+Git repo: https://github.com/Laislo/gde-b-alkfet.git
+
+Docker Desktop esetén a **docker-compose.yml** fájlra lesz szükség.
+
+2. konténerek elindítása
+
+Docker Desktop esetén, fusson a Docker Desktop, nyissunk egy parancssort, navigáljunk a oda, ahova a **docker-compose.yml** le lett töltve, majd futtassuk az alábbi parancsot
+
+```bash
+docker compose up
+```
+
+3. konténerek állapotának ellenőrzése
+
 Docker Desktop esetén a paranccsorból való indítás után a **View in Docker Desktop** lehetőséggel tudjuk ellenőrizni. Ezután meg tudjuk nyitni a böngészőben is.
 
 ## Használat, ellenőrzés
@@ -115,3 +123,55 @@ Esetemben egy különálló gépen futtattam a környezetet.
 Ezzel a LIMS rendszer grafikus felületét láthatjuk, ide tudunk felvinni mintákat.
 Minden új minta **PENDING** állapotban jön létre, egészen addig amíg a **Minták listája** felületen nem kerül rögzítésre eredmény.
 A minta regisztrálásakor megadott határértékektől függően a rögzített mérési érték alapján lehet **COMPLETED** vagy **OOS**.
+
+## API végpontok
+
+### Samples
+
+GET
+
+- /api/samples
+    az összes feltöltött minta listázása
+- /api/samples/{s_id}
+    megadott minta adatainak lekérdezése
+
+POST
+
+- /api/samples
+    új minta feltöltése
+
+DELETE
+
+- /api/samples/{s_id}
+    megadott minta törlése
+
+### Results
+
+PATCH
+
+- /api/results/{s_id}
+    megadott mintához történő érték rögzítése
+
+## MCP szerver
+
+MCP szerver elérése: http://SERVERIP:8080/sse
+
+### curl alapú tesztelés
+
+```bash
+curl -N http://<SERVER_IP>:8080/sse
+```
+
+Az itt kapott **session_id** segítségével inicializálunk:
+
+```bash
+curl -X POST "http://<SERVER_IP>:8080/messages?session_id=<session_id>" \
+-H "Content-Type: application/json" \
+-d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
+```
+
+### Elérhető MCP funkciók
+
+- get_all_samples: Összes laboratóriumi minta listázása.
+- get_lab_summary: Statisztikai összegzés (Összes minta, OOS darabszám).
+- check_sample_history: Egy konkrét minta részletes adatai lab_id alapján.
