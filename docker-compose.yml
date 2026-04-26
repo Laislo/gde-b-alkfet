@@ -90,10 +90,16 @@ services:
       - WATCHTOWER_LABEL_ENABLE=true
       # Ha a GitHub Registry (GHCR) privát, ide kellenek a belépési adatok
       # - WATCHTOWER_HTTP_API_UPDATE=true
+      # privat repo hasznalata eseten szukseg van egy .env a szerverre, ami tartalmazza az adatokat:
+      # GITHUB_USER=username
+      # GITHUB_TOKEN=GITHUB_token
       # - REPO_USER=${GITHUB_USER}
       # - REPO_PASS=${GITHUB_TOKEN}
       - DOCKER_API_VERSION=1.40
+    networks:
+      - klab-network
     restart: always
+  
 
 volumes:
   mongo_data:
