@@ -95,7 +95,7 @@ services:
       # GITHUB_TOKEN=GITHUB_token
       # - REPO_USER=${GITHUB_USER}
       # - REPO_PASS=${GITHUB_TOKEN}
-      - DOCKER_API_VERSION=1.40
+      - DOCKER_API_VERSION=1.54
     networks:
       - klab-network
     restart: always
