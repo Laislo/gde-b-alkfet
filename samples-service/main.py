@@ -49,6 +49,10 @@ class SampleCreate(BaseModel):
 
     @model_validator(mode='after')
     def check_limits(self):
+        if self.specMax > 200.0:
+            raise ValueError('A specifikációs maximum nem haladhatja meg a 200%-ot!')
+        if self.specMin < 0.0:
+            raise ValueError('A specifikációs minimum nem lehet negatív!')
         if self.specMin >= self.specMax:
             raise ValueError('A minimum értéknek kisebbnek kell lennie a maximumnál!')
         return self
