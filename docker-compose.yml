@@ -33,6 +33,7 @@ services:
     build: ./results-service
     container_name: klab_results_service
     environment:
+      - TZ=Europe/Budapest
       - MONGO_URI=mongodb://db:27017
     depends_on:
       - db
@@ -49,6 +50,7 @@ services:
     ports:
       - "8080:8000"
     environment:
+      - TZ=Europe/Budapest
       - SAMPLES_API_URL=http://samples-service:8000
       - RESULTS_API_URL=http://results-service:8000
       - PYTHONUNBUFFERED=1
@@ -67,6 +69,8 @@ services:
     container_name: klab_frontend
     ports:
       - "80:80"
+    environment:
+      - TZ=Europe/Budapest
     depends_on:
       - samples-service
       - results-service
@@ -79,6 +83,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
+      - TZ=Europe/Budapest
       # Milyen gyakran ellenőrizzen (másodpercben). Pl. 300 mp = 5 perc
       - WATCHTOWER_POLL_INTERVAL=300
       # Csak azokat a konténereket frissítse, amiket megjelölünk (biztonságosabb)
