@@ -87,6 +87,7 @@ services:
       # - WATCHTOWER_HTTP_API_UPDATE=true
       # - REPO_USER=${GITHUB_USER}
       # - REPO_PASS=${GITHUB_TOKEN}
+      - DOCKER_API_VERSION=1.40
     restart: always
 
 volumes:
