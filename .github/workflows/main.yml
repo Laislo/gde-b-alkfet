@@ -67,8 +67,8 @@ jobs:
           push: true
           tags: ${{ steps.meta-samples.outputs.tags }}
           labels: ${{ steps.meta-samples.outputs.labels }}
-          #cache-from: type=gha
-          #cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # --- RESULTS SERVICE ---
       - name: Extract metadata for Results
@@ -90,8 +90,8 @@ jobs:
           push: true
           tags: ${{ steps.meta-results.outputs.tags }}
           labels: ${{ steps.meta-results.outputs.labels }}
-          #cache-from: type=gha
-          #cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # --- MCP SERVER ---
       - name: Extract metadata for MCP
@@ -113,8 +113,8 @@ jobs:
           push: true
           tags: ${{ steps.meta-mcp.outputs.tags }}
           labels: ${{ steps.meta-mcp.outputs.labels }}
-          #cache-from: type=gha
-          #cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
       # --- FRONTEND ---
       - name: Extract metadata for Frontend
@@ -136,6 +136,6 @@ jobs:
           push: true
           tags: ${{ steps.meta-frontend.outputs.tags }}
           labels: ${{ steps.meta-frontend.outputs.labels }}
-          #cache-from: type=gha
-          #cache-to: type=gha,mode=max
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           
