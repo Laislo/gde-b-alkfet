@@ -65,8 +65,8 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta-samples.outputs.tags }}
           labels: ${{ steps.meta-samples.outputs.labels }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=gha,scope=samples
+          cache-to: type=gha,mode=max,scope=samples
 
       # --- RESULTS SERVICE ---
       - name: Extract metadata for Results
