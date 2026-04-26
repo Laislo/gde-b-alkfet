@@ -72,7 +72,7 @@ services:
     networks:
       - klab-network
 
-    watchtower:
+  watchtower:
     image: containrrr/watchtower
     container_name: klab_watchtower
     volumes:
