@@ -10,8 +10,6 @@ import os
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-#teszt
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     # Startup

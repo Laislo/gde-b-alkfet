@@ -69,31 +69,7 @@ services:
       - samples-service
       - results-service
     networks:
-      - klab-network
-
-  watchtower:
-    image: containrrr/watchtower
-    container_name: klab_watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    environment:
-      - TZ=Europe/Budapest
-      # Milyen gyakran ellenőrizzen (másodpercben). Pl. 300 mp = 5 perc
-      - WATCHTOWER_POLL_INTERVAL=300
-      # Csak azokat a konténereket frissítse, amiket megjelölünk (biztonságosabb)
-      #- WATCHTOWER_LABEL_ENABLE=true
-      # Ha a GitHub Registry (GHCR) privát, ide kellenek a belépési adatok
-      # - WATCHTOWER_HTTP_API_UPDATE=true
-      # privat repo hasznalata eseten szukseg van egy .env a szerverre, ami tartalmazza az adatokat:
-      # GITHUB_USER=username
-      # GITHUB_TOKEN=GITHUB_token
-      # - REPO_USER=${GITHUB_USER}
-      # - REPO_PASS=${GITHUB_TOKEN}
-      - DOCKER_API_VERSION=1.54
-    networks:
-      - klab-network
-    restart: always
-  
+      - klab-network  
 
 volumes:
   mongo_data:
