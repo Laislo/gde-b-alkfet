@@ -3,7 +3,32 @@
 ## Leírás
 
 Ebben a projektben egy LIMS (Laboratory Information Management System - Laboratóriumi Információkezelő Rendszer) került megvalósításra.
-Labóratóriumi minták rögzítésének lehetősége, ezen minták fontos adatai a hatóanyag, sarzsszám, minimum és maximum érték, amik között a mérés megfelelő, ellenben OOS jelölést kap (Out of specification).
+Labóratóriumi minták rögzítésének lehetősége, ezen minták fontos adatai a hatóanyag, sarzsszám, minimum és maximum érték, amik között a mérés megfelelő, ellenben OOS jelölést kap (Out Of Specification).
+
+## Funkcionális követelmények - MoSCoW
+
+1. Must have (Implementált)
+- Minta név (Hatóanyag) bevitel
+- Minta sarzsszám (Batch) bevitel
+- Nem vihető be a rendszerben már létező sarzsszám
+- Hatóanyagtaralom alsó és felső specifikáció megadás (default: 95.0 - 105.0 %)
+- Automatikus laboratóriumi futó ID generálás (KLab/[ÉVSZÁM]/[SORSZÁM])
+- Vizsgálati státusz jelölése (Pending/Completed/OOS)
+- Vizsgálati eredmény rögzítése (Hatóanyag-tartalom %)
+- Specifikáción kívüli eredmény esetén auotomatikus futó OOS azonosító generálás (OOS-[ÉVSZÁM]-[SORSZÁM])
+- Minta törlés
+- Keresés funkció (Hatóanyag, Sarzsszám, LAB ID alapján)
+
+2. Should have (Implementált)
+- Minta érkeztetési és a vizsgálati eredmény beviteli idők rögzítése KPI számítás érdekében (átfutási idők)
+- Értelmetlen vizsgálati eredmény bevitelének tiltása (negatív számok, 200% feletti hatóanyagtartalom)
+
+3. Could have (Nem implementált)
+- Felhasználó azonosítás
+- Jogosultsági körök (pl.: Minta érkeztető, Eredmény bevivő, Vizsgálati eredményt jóváhagyó / törlő jogosultság)
+
+4. Won't have (Nem implementált)
+- Integráció egy különálló gyógyszeripari QA szoftverrel, mely az OOS eredményeket jóváhagyja (Termékhiba), vagy újravizsgálatot rendel el (Mintavételi vagy analitikai hiba). 
 
 ### Rendszer felépítése
 
@@ -12,7 +37,7 @@ A rendszer Docker alapokra építve készült el.
 
 ```
 ┌─────────────┐      ┌─────────────────┐     ┌─────────┐
-│  frontend   │────▶│ samples-service │────▶│ MongoDB │
+│  frontend   │────▶ │ samples-service │────▶│ MongoDB │
 │  (Vue.js)   │      │ results-service │     │  (8.0)  │
 │  port: 80   │      │  (FastAPI)      │     │  27017  │
 │             │      │  port: 8000     │     │         │
