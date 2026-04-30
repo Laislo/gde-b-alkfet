@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: results-service
+  namespace: klab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: results-service
+  template:
+    metadata:
+      labels:
+        app: results-service
+    spec:
+      containers:
+        - name: results-service
+          image: ghcr.io/laislo/klab-results-service:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: klab-secrets
+                  key: mongo-uri
+            - name: TZ
+              value: "Europe/Budapest"
