@@ -93,9 +93,7 @@ A telepítéshez, használathoz szükségünk lesz az alábbiakra:
 
 ### Lépések
 
-
-1. repository klónozása
-
+# 1. repository klónozása
 
 ```bash
 git clone https://github.com/Laislo/gde-b-alkfet.git
@@ -103,39 +101,42 @@ cd gde-b-alkfet
 ```
 
 
-2. ArgoCD telepítése
+# 2. ArgoCD telepítése
 
-  1. Namespace létrehozása
+1. Namespace létrehozása
+
 ```bash
 kubectl create namespace argocd
 ```
 
-  2. ArgoCD telepítése
+2. ArgoCD telepítése
+
 ```bash
 kubectl apply -n argocd \
   --server-side \
   -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
 ```
 
-  3. Telepítés ellenőrzése
+3. Telepítés ellenőrzése
+
 ```bash
 kubectl get pods -n argocd
 ```
 
-  4. ArgoCD IU-t elérhetővé tesszük NodePort-on
+4. ArgoCD IU-t elérhetővé tesszük NodePort-on
 
 ```bash
 kubectl patch svc argocd-server -n argocd \
   -p '{"spec": {"type": "NodePort"}}'
 ```
 
-  5. Lekérjük a beállított portot
+5. Lekérjük a beállított portot
 
 ```bash
 kubectl get svc argocd-server -n argocd
 ```
 
-  6. Lekérjük az admin jelszót
+6. Lekérjük az admin jelszót
 
 ```bash
 kubectl get secret argocd-initial-admin-secret \
@@ -143,43 +144,35 @@ kubectl get secret argocd-initial-admin-secret \
   -o jsonpath="{.data.password}" | base64 -d && echo
 ```
 
-  7. Megnyitjuk az ArgoCD webes felületét
+7. Megnyitjuk az ArgoCD webes felületét
 
 https://SzerverIP:<nodeport> (30000 feletti port, amit a 5. pontban adott vissza a rendszer)
 
 Felhasználónév: admin
 Jelszó: 6. pontban lekértük
 
-3. ArgoCD application manifest alkalmazása
+8. ArgoCD application manifest alkalmazása
 
 ```bash
 kubectl apply -f k8s/argocd/argocd-app.yaml
 ```
 
-
-3. konténerek állapotának ellenőrzése
-
+9. konténerek állapotának ellenőrzése
 
 Az összes információ mutatása a futó konténerekről:
-
 
 ```bash
 kubectl get pods -n klab
 ```
 
-
 ## Használat, ellenőrzés
-
 
 Innentől, hogy fut minden konténer, megnyithatjuk a böngészőben.
 
-
 Esetemben egy különálló gépen futtattam a környezetet.
-
 
 - Saját gépen futtatva: **http://localhost:30000**
 - Külön szerveren futtatva: **http://SERVERIP:30000**
-
 
 Ezzel a LIMS rendszer grafikus felületét láthatjuk, ide tudunk felvinni mintákat.
 Minden új minta **PENDING** állapotban jön létre, egészen addig amíg a **Minták listája** felületen nem kerül rögzítésre eredmény.
