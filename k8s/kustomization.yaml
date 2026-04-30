@@ -1,0 +1,20 @@
+namespace: klab
+
+resources:
+  - namespace.yaml
+  - secrets.yaml
+  - mongodb/statefulset.yaml
+  - mongodb/service.yaml
+  - samples-service/deployment.yaml
+  - samples-service/service.yaml
+  - results-service/deployment.yaml
+  - results-service/service.yaml
+  - mcp-server/deployment.yaml
+  - mcp-server/service.yaml
+  - frontend/deployment.yaml
+  - frontend/service.yaml
+
+configMapGenerator:
+  - name: mongo-init-script
+    files:
+      - init-db.js=mongodb/init-db.js

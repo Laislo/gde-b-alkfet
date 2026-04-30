@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: results-service
+  namespace: klab
+spec:
+  selector:
+    app: results-service
+  ports:
+    - port: 8000
+      targetPort: 8000

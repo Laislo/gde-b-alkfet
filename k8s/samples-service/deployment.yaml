@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: samples-service
+  namespace: klab
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: samples-service
+  template:
+    metadata:
+      labels:
+        app: samples-service
+    spec:
+      containers:
+        - name: samples-service
+          image: ghcr.io/laislo/klab-samples-service:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: MONGO_URI
+              valueFrom:
+                secretKeyRef:
+                  name: klab-secrets
+                  key: mongo-uri
