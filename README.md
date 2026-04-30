@@ -146,7 +146,7 @@ kubectl get secret argocd-initial-admin-secret \
 
 7. Megnyitjuk az ArgoCD webes felületét
 
-https://SzerverIP:<nodeport> (30000 feletti port, amit a 5. pontban adott vissza a rendszer)
+https://SzerverIP:nodeport (30000 feletti port, amit a 5. pontban adott vissza a rendszer)
 
 Felhasználónév: admin
 
