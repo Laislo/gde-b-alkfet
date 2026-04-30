@@ -1,5 +1,5 @@
 ### Alapváltozók beállítása
-@baseUrl = http://192.168.1.60/api
+@baseUrl = http://SzerverIP:30000/api
 
 # Ide másold majd be az első POST kérés után kapott _id értéket!
 @sampleId = SampleID_from_samples
@@ -35,7 +35,7 @@ Content-Type: application/json
 DELETE {{baseUrl}}/samples/{{sampleId}}
 
 ### Alapváltozók
-@baseUrl_mcp = http://SERVER_IP:8080
+@baseUrl_mcp = http://SERVER_IP:30080
 # FONTOS: Ezt a session_id-t az 1. lépés válaszából kell majd kimásolnod!
 @session_id = SessionID_from_SSE_response
 

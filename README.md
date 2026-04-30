@@ -149,6 +149,7 @@ kubectl get secret argocd-initial-admin-secret \
 https://SzerverIP:<nodeport> (30000 feletti port, amit a 5. pontban adott vissza a rendszer)
 
 Felhasználónév: admin
+
 Jelszó: 6. pontban lekértük
 
 8. ArgoCD application manifest alkalmazása
